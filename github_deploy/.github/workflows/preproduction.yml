@@ -1,0 +1,44 @@
+# IMPORTANTE: en necesario crear el archivo .ftp-deploy-sync-state.json en el directorio donde se vaya a realizar la
+# subida por si esta Action no puede crearlo. Si no lo hacemos, cada vez que se haga un push, se subirán TODOS los archivos
+name: 🌗 Deployment in PRE-PRODUCTION environment
+on:
+  push:
+    branches:
+      - preproduction
+jobs:
+  web-deploy:
+    name: ⚡️ Deploy website on push
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🏄‍♂️ Get latest code
+        uses: actions/checkout@v2.3.2
+
+      - name: 🔥 Install Composer Dependencies
+        run: composer install --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
+
+      - name: 📂 Deploy files via FTP with FTP-Deploy-Action
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          server: sistema-conwork.com
+          username: github_deploy
+          password: ${{ secrets.FTP_MV_CONWORK_PASS }} 
+          local-dir: ./sistema
+          server-dir: var/www/vhosts/sistema-conwork.com/demosistema
+          exclude: 
+            - .git*
+            - .git*/**
+            - .git*/**
+            - .vscode
+            - .vscode/**
+            - .github/
+            - demosistema/documentation
+            - demosistema/documentation/**
+            - demosistema/logs
+            - demosistema/logs/**
+            - upload
+            - upload/**
+            - demosistema/composer.json
+            - demosistema/composer.lock
+          log-level: verbose
+          security: loose
+          dry-run: false

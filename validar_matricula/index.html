@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validador matrícula</title>
+</head>
+<body>
+    <form>
+        <label for="matricula">Matrícula</label>
+        <input type="text" name="matricula" id="matricula" value=""/>
+        <input type="button" onclick="validar()" value="Validar">
+    </form>
+    <br>
+    <div id="resultado"></div>
+</body>
+<script>
+
+/*
+Formatos que hay en España
+========================================
+- Formatos actuales:
+  - Europeo: 1234BBB
+  - Vehículo histórico: H7010BBD
+  - Remolque: R7654BBD
+  - Temporales P0000BBB (Particulares), S0000BBB ó V0000BBB (Empresas)
+
+- Formatos antigüos:
+  - Provincial: B1234AA (Vehículos) y BA00000R (Remolques)
+  - Ciclomotores: C1234BBBB
+  - Desfasadas (Primeros en España): B123456
+
+- Formatos NO contemplados:
+  - Vehículo especial (Agrícolas y otros): E0000BBB
+  - Matrículas turísticas (importaciones): T0000BBB
+  - Organismos
+*/
+const validar_matricula = (value) => {
+    
+    //Limpiamos la matrícula
+    let str = value.toString().toUpperCase().replace('-', '');
+    console.log(str);
+
+    //Formatos matrícula
+    let formato_europeo = /^[0-9]{4}[BCDFGHJKLMNPRSTVWXYZ]{3}$/;
+    let formato_historico = /^H[0-9]{4}[BCDFGHJKLMNPRSTVWXYZ]{3}$/;
+    let formato_remolque = /^R[0-9]{4}[BCDFGHJKLMNPRSTVWXYZ]{3}$/;
+    let formato_temporales = /^[PSV]{1}[0-9]{4}[BCDFGHJKLMNPRSTVWXYZ]{3}$/;
+    //let formato_especial = /^E[0-9]{4}[BCDFGHJKLMNPRSTVWXYZ]{3}$/;
+    //let formato_turisticas = /^T[0-9]{4}[BCDFGHJKLMNPRSTVWXYZ]{3}$/;
+
+    let formato_provincial = /^[A-Z]{1,2}[0-9]{4}[A-Z]{1,2}$/;
+    let formato_ciclomotores = /^C[0-9]{4}[BCDFGHJKLMNPRSTVWXYZ]{3}$/;
+    let formato_desfasado = /^[A-Z]{1,2}[0-9]{6}$/;
+    
+    //Validamos
+    if (formato_europeo.test(str) || 
+        formato_provincial.test(str) || 
+        formato_desfasado.test(str) || 
+        formato_ciclomotores.test(str) || 
+        formato_historico.test(str) || 
+        formato_remolque.test(str) || 
+        formato_temporales.test(str)) {
+        return true;
+    }
+
+    return false;
+}
+
+function validar(){
+
+    let matricula = document.getElementById('matricula').value;
+
+    if(validar_matricula(matricula)){
+        document.getElementById('resultado').innerHTML = '<span style="color:green;">Matrícula correcta</span>';
+    }else{
+        document.getElementById('resultado').innerHTML = '<span style="color:red;">Matrícula errónea</span>';
+    } 
+
+}
+</script>
+</html>
